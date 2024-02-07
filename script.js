@@ -4,37 +4,36 @@ window.addEventListener("DOMContentLoaded", start);
 
 // Global variables
 
-let result = null;
+let star = 0;
+let end = 100;
+let middle = null;
+let targetValue;
 let guess = null;
 let guesses = [];
-let isButtonsInitialized = false;
 
 function start() {
   console.log("Starting game...");
 
   document.querySelector("#btn-confirm-number").addEventListener("click", enterNumber);
+  document.querySelector("#btn-too-low").addEventListener("click", tooLow);
+  document.querySelector("#btn-too-high").addEventListener("click", tooHigh);
 }
 
 function enterNumber() {
   console.log("enterNumber()");
 
   // Visually display confirmed number
-  result = document.querySelector("#input-number-to-guess").value;
-  document.querySelector("#p-confirmed-number").innerHTML = result;
+  targetValue = document.querySelector("#input-number-to-guess").value;
+  document.querySelector("#p-confirmed-number").innerHTML = "Answer is: " + targetValue;
 
   // Initiate guessing
-  handleGuess();
+  handleGuess(targetValue);
 }
 
 function handleGuess() {
   console.log("handleGuess()");
   console.log("Current guess: " + guess);
-
-  // Check for win
-  if (result == guess) {
-    console.log("You win!");
-    return;
-  }
+  console.log("Current targetValue: " + targetValue);
 
   // If new guess
   if (guess == null) {
@@ -43,22 +42,32 @@ function handleGuess() {
     console.log(guess);
   }
 
-  // Wait for user feedback
-  if (!isButtonsInitialized) {
-    document.querySelector("#btn-too-low").addEventListener("click", tooLow);
-    document.querySelector("#btn-too-high").addEventListener("click", tooHigh);
-    isButtonsInitialized = true;
+  // Check for win
+  if (targetValue == guess) {
+    console.log("You win!");
+    const list = document.querySelector("#guess-list");
+    const html = `<li>I guess ${guess} - It is correct!</li>`;
+    list.insertAdjacentHTML("beforeend", html);
+    return;
   }
+
+  const list = document.querySelector("#guess-list");
+  const html = `<li>I guess ${guess} - is it correct?</li>`;
+  list.insertAdjacentHTML("beforeend", html);
 }
+
+function recieveGuess() {}
 
 function tooLow() {
   console.log("tooLow()");
-  guess++;
+  star = guess + 1;
+  guess = Math.floor((star + end) / 2);
   handleGuess();
 }
 
 function tooHigh() {
   console.log("tooHigh()");
-  guess--;
+  end = guess - 1;
+  guess = Math.floor((star + end) / 2);
   handleGuess();
 }
